@@ -12,6 +12,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static test.commerce.EmailGenerator.generateEmail;
+import static test.commerce.UsernameGenerator.generateUsername;
 
 @SpringBootTest(
     classes = CommerceApiApp.class,
@@ -24,7 +26,11 @@ public class POST_specs {
     void 올바르게_요청하면_204_No_Content_상태코드를_반환한다(
         @Autowired TestRestTemplate client
     ) {
-        var command = new CreateSeller("seller@test.com", "seller", "password");
+        var command = new CreateSeller(
+            generateEmail(),
+            generateUsername(),
+            "password"
+        );
 
         ResponseEntity<Void> response = client.postForEntity(
             "/seller/signUp",
@@ -34,12 +40,12 @@ public class POST_specs {
 
         assertThat(response.getStatusCode().value()).isEqualTo(204);
     }
-    
+
     @Test
     void email_속성이_지정되지_않으면_400_Bad_Request_상태코드를_반환한다(
         @Autowired TestRestTemplate client
     ) {
-        var command = new CreateSeller(null, "seller", "password");
+        var command = new CreateSeller(null, generateUsername(), "password");
 
         ResponseEntity<Void> response = client.postForEntity(
             "/seller/signUp",
@@ -61,7 +67,7 @@ public class POST_specs {
         String email,
         @Autowired TestRestTemplate client
     ) {
-        var command = new CreateSeller(email, "seller", "password");
+        var command = new CreateSeller(email, generateUsername(), "password");
 
         ResponseEntity<Void> response = client.postForEntity(
             "/seller/signUp",
@@ -76,7 +82,7 @@ public class POST_specs {
     void username_속성이_지정되지_않으면_400_Bad_Request_상태코드를_반환한다(
         @Autowired TestRestTemplate client
     ) {
-        var command = new CreateSeller("seller@test.com", null, "password");
+        var command = new CreateSeller(generateEmail(), null, "password");
 
         ResponseEntity<Void> response = client.postForEntity(
             "/seller/signUp",
@@ -99,7 +105,7 @@ public class POST_specs {
         String username,
         @Autowired TestRestTemplate client
     ) {
-        var command = new CreateSeller("seller@test.com", username, "password");
+        var command = new CreateSeller(generateEmail(), username, "password");
 
         ResponseEntity<Void> response = client.postForEntity(
             "/seller/signUp",
@@ -114,7 +120,11 @@ public class POST_specs {
     void password_속성이_지정되지_않으면_400_Bad_Request_상태코드를_반환한다(
         @Autowired TestRestTemplate client
     ) {
-        var command = new CreateSeller("seller@test.com", "seller", null);
+        var command = new CreateSeller(
+            generateEmail(),
+            generateUsername(),
+            null
+        );
 
         ResponseEntity<Void> response = client.postForEntity(
             "/seller/signUp",
@@ -135,7 +145,11 @@ public class POST_specs {
         String password,
         @Autowired TestRestTemplate client
     ) {
-        var command = new CreateSeller("seller@test.com", "seller", password);
+        var command = new CreateSeller(
+            generateEmail(),
+            generateUsername(),
+            password
+        );
 
         ResponseEntity<Void> response = client.postForEntity(
             "/seller/signUp",
@@ -143,6 +157,52 @@ public class POST_specs {
             Void.class
         );
 
+        assertThat(response.getStatusCode().value()).isEqualTo(400);
+    }
+
+    @Test
+    void email_속성에_이미_존재하는_이메일_주소가_지정되면_400_Bad_Request_상태코드를_반환한다(
+        @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        var email = generateEmail();
+        client.postForEntity(
+            "/seller/signUp",
+            new CreateSeller(email, generateUsername(), "password"),
+            Void.class
+        );
+
+        // Act
+        ResponseEntity<Void> response = client.postForEntity(
+            "/seller/signUp",
+            new CreateSeller(email, generateUsername(), "password"),
+            Void.class
+        );
+
+        // Assert
+        assertThat(response.getStatusCode().value()).isEqualTo(400);
+    }
+
+    @Test
+    void username_속성에_이미_존재하는_사용자이름이_지정되면_400_Bad_Request_상태코드를_반환한다(
+        @Autowired TestRestTemplate client
+    ) {
+        // Arrange
+        var username = "seller";
+        client.postForEntity(
+            "/seller/signUp",
+            new CreateSeller(generateEmail(), username, "password"),
+            Void.class
+        );
+
+        // Act
+        ResponseEntity<Void> response = client.postForEntity(
+            "/seller/signUp",
+            new CreateSeller(generateEmail(), username, "password"),
+            Void.class
+        );
+
+        // Assert
         assertThat(response.getStatusCode().value()).isEqualTo(400);
     }
 }

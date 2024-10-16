@@ -1,5 +1,7 @@
 package commerce;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,12 +19,15 @@ public class Shopper {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long sequence;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
+    private UUID id;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(length = 1000)
+    @Column(length = 1000, nullable = false)
     private String hashedPassword;
 }

@@ -1,5 +1,7 @@
 package commerce.api.controller;
 
+import java.util.UUID;
+
 import commerce.Patterns;
 import commerce.Seller;
 import commerce.SellerRepository;
@@ -24,8 +26,10 @@ public record SellerSignUpController(
         }
 
         try {
+            UUID id = UUID.randomUUID();
             String hashedPassword = passwordEncoder.encode(command.password());
             var seller = new Seller();
+            seller.setId(id);
             seller.setEmail(command.email());
             seller.setUsername(command.username());
             seller.setHashedPassword(hashedPassword);

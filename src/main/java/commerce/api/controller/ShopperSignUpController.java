@@ -1,9 +1,9 @@
 package commerce.api.controller;
 
 import commerce.Patterns;
-import commerce.Seller;
-import commerce.SellerRepository;
-import commerce.command.CreateSeller;
+import commerce.Shopper;
+import commerce.ShopperRepository;
+import commerce.command.CreateShopper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,24 +12,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public record SellerSignUpController(
-    SellerRepository repository,
+public record ShopperSignUpController(
+    ShopperRepository repository,
     PasswordEncoder passwordEncoder
 ) {
 
-    @PostMapping("/seller/signUp")
-    public ResponseEntity<?> signUp(@RequestBody CreateSeller command) {
+    @PostMapping("/shopper/signUp")
+    ResponseEntity<?> signUp(@RequestBody CreateShopper command) {
         if (isCommandValid(command) == false) {
             return ResponseEntity.badRequest().build();
         }
 
         try {
             String hashedPassword = passwordEncoder.encode(command.password());
-            var seller = new Seller();
-            seller.setEmail(command.email());
-            seller.setUsername(command.username());
-            seller.setHashedPassword(hashedPassword);
-            repository.save(seller);
+            var shopper = new Shopper();
+            shopper.setEmail(command.email());
+            shopper.setUsername(command.username());
+            shopper.setHashedPassword(hashedPassword);
+            repository.save(shopper);
         } catch (DataIntegrityViolationException exception) {
             return ResponseEntity.badRequest().build();
         }
@@ -37,18 +37,18 @@ public record SellerSignUpController(
         return ResponseEntity.noContent().build();
     }
 
-    private static boolean isCommandValid(CreateSeller command) {
+    private static boolean isCommandValid(CreateShopper command) {
         return isEmailValid(command.email())
             && isUsernameValid(command.username())
             && isPasswordValid(command.password());
     }
 
-    private static boolean isUsernameValid(String username) {
-        return username != null && username.matches(Patterns.USERNAME_REGEX);
-    }
-
     private static boolean isEmailValid(String email) {
         return email != null && email.matches(Patterns.EMAIL_REGEX);
+    }
+
+    private static boolean isUsernameValid(String username) {
+        return username != null && username.matches(Patterns.USERNAME_REGEX);
     }
 
     private static boolean isPasswordValid(String password) {

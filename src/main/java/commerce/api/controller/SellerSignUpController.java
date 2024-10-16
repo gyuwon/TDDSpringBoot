@@ -5,12 +5,16 @@ import commerce.SellerRepository;
 import commerce.command.CreateSellerCommand;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public record SellerSignUpController(SellerRepository repository) {
+public record SellerSignUpController(
+    Pbkdf2PasswordEncoder passwordEncoder,
+    SellerRepository repository
+) {
 
     private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
     private static final String USERNAME_REGEX = "^[A-Za-z0-9_-]{3,}$";
@@ -21,9 +25,11 @@ public record SellerSignUpController(SellerRepository repository) {
             return ResponseEntity.badRequest().build();
         }
 
+        String hashedPassword = passwordEncoder.encode(command.password());
         var seller = new Seller();
         seller.setEmail(command.email());
         seller.setUsername(command.username());
+        seller.setHashedPassword(hashedPassword);
 
         try {
             repository.save(seller);

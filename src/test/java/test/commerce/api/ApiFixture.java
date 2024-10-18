@@ -7,6 +7,10 @@ import commerce.query.IssueShopperToken;
 import commerce.result.AccessTokenCarrier;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 
+import static test.commerce.EmailGenerator.generateEmail;
+import static test.commerce.PasswordGenerator.generatePassword;
+import static test.commerce.UsernameGenerator.generateUsername;
+
 public record ApiFixture(TestRestTemplate client) {
 
     public void createSeller(String email, String username, String password) {
@@ -23,6 +27,14 @@ public record ApiFixture(TestRestTemplate client) {
         return carrier.accessToken();
     }
 
+    public String createSellerThenIssueToken() {
+        String email = generateEmail();
+        String username = generateUsername();
+        String password = generatePassword();
+        createSeller(email, username, password);
+        return issueSellerToken(email, password);
+    }
+
     public void createShopper(String email, String username, String password) {
         var command = new CreateShopperCommand(email, username, password);
         client.postForEntity("/shopper/signUp", command, Void.class);
@@ -35,5 +47,13 @@ public record ApiFixture(TestRestTemplate client) {
             AccessTokenCarrier.class
         );
         return carrier.accessToken();
+    }
+
+    public String createShopperThenIssueToken() {
+        String email = generateEmail();
+        String username = generateUsername();
+        String password = generatePassword();
+        createShopper(email, username, password);
+        return issueShopperToken(email, password);
     }
 }

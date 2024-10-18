@@ -9,6 +9,7 @@ import java.util.UUID;
 import commerce.Product;
 import commerce.ProductRepository;
 import commerce.command.RegisterProductCommand;
+import commerce.result.ArrayCarrier;
 import commerce.view.SellerProductView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,15 +45,35 @@ public record SellerProductsController(ProductRepository repository) {
         return repository
             .find(id)
             .filter(product -> product.getSellerId().equals(sellerId))
-            .map(product -> new SellerProductView(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getPriceAmount(),
-                product.getStockQuantity(),
-                product.getRegisteredTimeUtc()
-            ))
+            .map(SellerProductsController::toView)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/seller/products")
+    ResponseEntity<?> getProducts(Principal user) {
+        UUID sellerId = UUID.fromString(user.getName());
+        Object[] items = repository
+            .findBySellerId(sellerId)
+            .stream()
+            .sorted(SellerProductsController::compareRegisteredTimesDesc)
+            .map(SellerProductsController::toView)
+            .toArray();
+        return ResponseEntity.ok(new ArrayCarrier<>(items));
+    }
+
+    private static int compareRegisteredTimesDesc(Product a, Product b) {
+        return b.getRegisteredTimeUtc().compareTo(a.getRegisteredTimeUtc());
+    }
+
+    private static SellerProductView toView(Product product) {
+        return new SellerProductView(
+            product.getId(),
+            product.getName(),
+            product.getDescription(),
+            product.getPriceAmount(),
+            product.getStockQuantity(),
+            product.getRegisteredTimeUtc()
+        );
     }
 }

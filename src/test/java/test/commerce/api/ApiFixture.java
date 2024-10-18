@@ -1,14 +1,22 @@
 package test.commerce.api;
 
+import java.net.URI;
+import java.util.UUID;
+
 import commerce.command.CreateSellerCommand;
 import commerce.command.CreateShopperCommand;
+import commerce.command.RegisterProductCommand;
 import commerce.query.IssueSellerToken;
 import commerce.query.IssueShopperToken;
 import commerce.result.AccessTokenCarrier;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 
+import static java.util.Objects.requireNonNull;
 import static test.commerce.EmailGenerator.generateEmail;
 import static test.commerce.PasswordGenerator.generatePassword;
+import static test.commerce.RegisterProductCommandGenerator.generateRegisterProductCommand;
 import static test.commerce.UsernameGenerator.generateUsername;
 
 public record ApiFixture(TestRestTemplate client) {
@@ -27,12 +35,21 @@ public record ApiFixture(TestRestTemplate client) {
         return carrier.accessToken();
     }
 
-    public String createSellerThenIssueToken() {
-        String email = generateEmail();
-        String username = generateUsername();
-        String password = generatePassword();
+    public String createSellerThenIssueToken(
+        String email,
+        String username,
+        String password
+    ) {
         createSeller(email, username, password);
         return issueSellerToken(email, password);
+    }
+
+    public String createSellerThenIssueToken() {
+        return createSellerThenIssueToken(
+            generateEmail(),
+            generateUsername(),
+            generatePassword()
+        );
     }
 
     public void createShopper(String email, String username, String password) {
@@ -55,5 +72,20 @@ public record ApiFixture(TestRestTemplate client) {
         String password = generatePassword();
         createShopper(email, username, password);
         return issueShopperToken(email, password);
+    }
+
+    public UUID registerProduct(String token, RegisterProductCommand command) {
+        RequestEntity<?> request = RequestEntity
+            .post("/seller/products")
+            .header("Authorization", "Bearer " + token)
+            .body(command);
+        ResponseEntity<Void> response = client.exchange(request, Void.class);
+        URI location = requireNonNull(response.getHeaders().getLocation());
+        String path = location.getPath();
+        return UUID.fromString(path.substring("/seller/products/".length()));
+    }
+
+    public UUID registerProduct(String token) {
+        return registerProduct(token, generateRegisterProductCommand());
     }
 }

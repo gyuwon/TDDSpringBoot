@@ -57,7 +57,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(requests -> requests
                 .requestMatchers("/seller/signUp").permitAll()
                 .requestMatchers("/seller/issueToken").permitAll()
-                .requestMatchers("/seller/products").hasRole("SELLER")
+                .requestMatchers("/seller/**").hasRole("SELLER")
                 .requestMatchers("/shopper/signUp").permitAll()
                 .requestMatchers("/shopper/issueToken").permitAll()
                 .anyRequest().authenticated()

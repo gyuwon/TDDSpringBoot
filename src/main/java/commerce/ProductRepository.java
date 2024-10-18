@@ -1,5 +1,6 @@
 package commerce;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,4 +11,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.id = :id")
     Optional<Product> find(UUID id);
+
+    List<Product> findBySellerIdOrderByRegisteredTimeUtcDesc(UUID sellerId);
 }

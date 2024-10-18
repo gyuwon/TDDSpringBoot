@@ -1,6 +1,8 @@
 package test.commerce.api;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import commerce.command.CreateSellerCommand;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static test.commerce.EmailGenerator.generateEmail;
 import static test.commerce.PasswordGenerator.generatePassword;
@@ -87,5 +90,15 @@ public record ApiFixture(TestRestTemplate client) {
 
     public UUID registerProduct(String token) {
         return registerProduct(token, generateRegisterProductCommand());
+    }
+
+    public List<UUID> registerProducts(String token) {
+        List<UUID> ids = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            RegisterProductCommand command = generateRegisterProductCommand();
+            ids.add(registerProduct(token, command));
+        }
+
+        return unmodifiableList(ids);
     }
 }

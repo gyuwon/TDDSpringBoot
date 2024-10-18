@@ -1,11 +1,20 @@
 package test.commerce.api;
 
+import java.net.URI;
+import java.util.Objects;
+import java.util.UUID;
+
 import commerce.command.CreateSeller;
 import commerce.command.CreateShopper;
+import commerce.command.RegisterProductCommand;
 import commerce.query.IssueSellerToken;
 import commerce.query.IssueShopperToken;
 import commerce.result.AccessTokenCarrier;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+
+import static java.util.Objects.requireNonNull;
 
 public record ApiFixture(TestRestTemplate client) {
 
@@ -35,5 +44,16 @@ public record ApiFixture(TestRestTemplate client) {
             AccessTokenCarrier.class
         );
         return carrier.accessToken();
+    }
+
+    public UUID registerProduct(String token, RegisterProductCommand command) {
+        RequestEntity<?> request = RequestEntity
+            .post("/seller/products")
+            .header("Authorization", "Bearer " + token)
+            .body(command);
+        ResponseEntity<Void> response = client.exchange(request, Void.class);
+        URI location = requireNonNull(response.getHeaders().getLocation());
+        String path = location.getPath();
+        return UUID.fromString(path.substring("/seller/products/".length()));
     }
 }

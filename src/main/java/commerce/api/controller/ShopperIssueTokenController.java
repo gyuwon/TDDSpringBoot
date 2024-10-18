@@ -40,6 +40,7 @@ public record ShopperIssueTokenController(
             .builder()
             .signWith(new SecretKeySpec(jwtSecret.getBytes(), "HmacSHA256"))
             .setSubject(shopper.getId().toString())
+            .claim("scp", "ROLE_SHOPPER")
             .compact();
     }
 }

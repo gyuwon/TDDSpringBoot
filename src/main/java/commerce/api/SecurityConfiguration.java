@@ -60,6 +60,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/seller/**").hasRole("SELLER")
                 .requestMatchers("/shopper/signUp").permitAll()
                 .requestMatchers("/shopper/issueToken").permitAll()
+                .requestMatchers("/shopper/**").hasRole("SHOPPER")
                 .anyRequest().authenticated()
             )
             .build();

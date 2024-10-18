@@ -40,6 +40,7 @@ public record SellerIssueTokenController(
             .builder()
             .signWith(new SecretKeySpec(jwtSecret.getBytes(), "HmacSHA256"))
             .setSubject(seller.getId().toString())
+            .claim("scp", "ROLE_SELLER")
             .compact();
     }
 }

@@ -86,3 +86,31 @@
 - [x] 올바르게 요청하면 접근토큰을 반환한다
 - [x] 존재하지 않는 이메일이 사용되면 400 Bad Request 상태코드를 반환한다
 - [x] 잘못된 비밀번호가 사용되면 400 Bad Request 상태코드를 반환한다
+
+#### 구매자 접근토큰 발행
+
+요청
+- 메서드: POST
+- 경로: /shopper/issueToken
+- 본문
+  ```
+  IssueShopperToken {
+    email: string,
+    password: string
+  }
+  ```
+
+응답
+- 200 OK
+- 본문
+  ```
+  AccessTokenCarrier {
+    accessToken: string
+  }
+  ```
+
+테스트
+- [ ] 올바르게 요청하면 200 OK 상태코드를 반환한다
+- [ ] 올바르게 요청하면 접근토큰을 반환한다
+- [ ] 존재하지 않는 이메일이 사용되면 400 Bad Request 상태코드를 반환한다
+- [ ] 잘못된 비밀번호가 사용되면 400 Bad Request 상태코드를 반환한다

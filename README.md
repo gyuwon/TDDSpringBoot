@@ -260,3 +260,48 @@
 - [x] 상품 목록을 등록 시점 역순으로 정렬한다
 - [x] 다른 판매자가 등록한 상품이 포함되지 않는다
 - [X] 상품 속성을 올바르게 설정한다
+
+#### 구매자 상품 탐색
+
+요청
+- 메서드: GET
+- 경로: /shopper/products
+- 쿼리 매개변수
+  ```
+  continuationToken: string?
+  ```
+- 헤더
+  ```
+  Authorization: Bearer {token}
+  ```
+
+응답
+- 200 OK
+- 본문
+  ```
+  PageCarrier<ProductView> {
+    items: [
+      ProductView {
+        id: string,
+        seller: SellerView {
+          id: string,
+          username: string
+        },
+        name: string,
+        description: string,
+        priceAmount: number,
+        stockQuantity: number
+      }
+    ],
+    continuationToken: string
+  }
+  ```
+
+테스트
+- [ ] 올바르게 요청하면 200 상태코드를 반환한다
+- [ ] 상품 속성을 올바르게 설정한다
+- [ ] 상품 목록을 등록 시점 역순으로 정렬한다
+- [ ] 첫번째 페이지를 올바르게 반환한다
+- [ ] 두번째 페이지를 올바르게 반환한다
+- [ ] 마지막 페이지를 올바르게 반환한다
+- [ ] 판매자 접근토큰을 사용하면 403 Forbidden 상태코드를 반환한다

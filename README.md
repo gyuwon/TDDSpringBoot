@@ -165,3 +165,30 @@
 테스트
 - [x] 올바르게 요청하면 200 OK 상태코드를 반환한다
 - [x] 올바르게 요청하면 구매자 정보를 반환한다
+
+#### 판매자 상품 등록
+
+요청
+- 메서드: POST
+- 경로: /seller/products
+- 헤더
+  ```
+  Authorization: Bearer {token}
+  ```
+- 본문
+  ```
+  RegisterProductCommand {
+    name: string,
+    description: string,
+    priceAmount: number,
+    stockQuantity: number
+  }
+  ```
+
+응답
+- 201 Created
+
+테스트
+- [ ] 올바르게 요청하면 201 Created 상태코드를 반환한다
+- [ ] 올바르게 요청하면 등록된 상품 정보에 접근하는 Location 헤더를 반환한다
+- [ ] 잘못된 접근토큰을 사용하면 401 Unauthorized 상태코드를 반환한다

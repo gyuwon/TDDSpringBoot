@@ -192,3 +192,34 @@
 - [ ] 올바르게 요청하면 201 Created 상태코드를 반환한다
 - [ ] 올바르게 요청하면 등록된 상품 정보에 접근하는 Location 헤더를 반환한다
 - [ ] 잘못된 접근토큰을 사용하면 401 Unauthorized 상태코드를 반환한다
+
+#### 판매자 상품 조회
+
+요청
+- 메서드: GET
+- 경로: /seller/products/{id}
+- 헤더
+  ```
+  Authorization: Bearer {token}
+  ```
+
+응답
+- 200 OK
+- 본문
+  ```
+  SellerProductView {
+    id: string,
+    name: string,
+    description: string,
+    priceAmount: number,
+    stockQuantity: number,
+    registeredTimeUtc: string
+  }
+  ```
+
+테스트
+- [ ] 올바르게 요청하면 200 상태코드를 반환한다
+- [ ] 올바르게 요청하면 상품 정보를 반환한다
+- [ ] 잘못된 접근토큰을 사용하면 401 Unauthorized 상태코드를 반환한다
+- [ ] 존재하지 않는 식별자를 사용하면 404 상태코드를 반환한다
+- [ ] 다른 판매자가 등록한 상품 식별자를 사용하면 404 상태코드를 반환한다

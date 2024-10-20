@@ -1,5 +1,7 @@
 package commerce.api.controller;
 
+import java.util.UUID;
+
 import commerce.Patterns;
 import commerce.Shopper;
 import commerce.ShopperRepository;
@@ -23,8 +25,10 @@ public record ShopperSignUpController(
             return ResponseEntity.badRequest().build();
         }
 
+        UUID id = UUID.randomUUID();
         String hashedPassword = passwordEncoder.encode(command.password());
         var shopper = new Shopper();
+        shopper.setId(id);
         shopper.setEmail(command.email());
         shopper.setUsername(command.username());
         shopper.setHashedPassword(hashedPassword);

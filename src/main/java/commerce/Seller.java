@@ -1,5 +1,7 @@
 package commerce;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +18,9 @@ public class Seller {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sequence;
+
+    @Column(unique = true)
+    private UUID id;
 
     @Column(unique = true)
     private String email;

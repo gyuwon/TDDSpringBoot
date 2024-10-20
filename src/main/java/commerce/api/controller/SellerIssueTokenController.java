@@ -2,6 +2,7 @@ package commerce.api.controller;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import commerce.Seller;
 import commerce.SellerRepository;
 import commerce.query.IssueSellerToken;
 import commerce.result.AccessTokenCarrier;
@@ -28,16 +29,17 @@ public record SellerIssueTokenController(
                 query.password(),
                 seller.getHashedPassword()
             ))
-            .map(seller -> composeToken())
+            .map(this::composeToken)
             .map(AccessTokenCarrier::new)
             .map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    private String composeToken() {
+    private String composeToken(Seller seller) {
         return Jwts
             .builder()
             .signWith(new SecretKeySpec(jwtSecret.getBytes(), "HmacSHA256"))
+            .setSubject(seller.getId().toString())
             .compact();
     }
 }

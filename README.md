@@ -114,3 +114,29 @@
 - [x] 올바르게 요청하면 접근토큰을 반환한다
 - [x] 존재하지 않는 이메일이 사용되면 400 Bad Request 상태코드를 반환한다
 - [x] 잘못된 비밀번호가 사용되면 400 Bad Request 상태코드를 반환한다
+
+#### 판매자 정보 조회
+
+요청
+- 메서드: GET
+- 경로: /seller/me
+- 헤더
+  ```
+  Authorization: Bearer {accessToken}
+  ```
+
+응답
+- 200 OK
+- 본문
+  ```
+  SellerMeView {
+    id: string,
+    email: string,
+    username: string
+  }
+  ```
+
+테스트
+- [ ] 올바르게 요청하면 200 OK 상태코드를 반환한다
+- [ ] 올바르게 요청하면 판매자 정보를 반환한다
+- [ ] 접근토큰을 사용하지 않으면 401 Unauthorized 상태코드를 반환한다

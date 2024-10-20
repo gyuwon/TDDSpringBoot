@@ -140,3 +140,28 @@
 - [x] 올바르게 요청하면 200 OK 상태코드를 반환한다
 - [x] 올바르게 요청하면 판매자 정보를 반환한다
 - [x] 접근토큰을 사용하지 않으면 401 Unauthorized 상태코드를 반환한다
+
+#### 구매자 정보 조회
+
+요청
+- 메서드: GET
+- 경로: /shopper/me
+- 헤더
+  ```
+  Authorization: Bearer {accessToken}
+  ```
+
+응답
+- 200 OK
+- 본문
+  ```
+  ShopperMeView {
+    id: string,
+    email: string,
+    username: string
+  }
+  ```
+
+테스트
+- [ ] 올바르게 요청하면 200 OK 상태코드를 반환한다
+- [ ] 올바르게 요청하면 구매자 정보를 반환한다
